@@ -29,6 +29,7 @@ const HealthRecordSchema = new Schema({
         type: Date,
         default: Date.now,
     },
+    userId:{ type: String, required: true }
 });
 
 export default model("HealthRecord", HealthRecordSchema);

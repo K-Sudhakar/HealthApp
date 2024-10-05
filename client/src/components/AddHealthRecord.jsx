@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { createHealthRecord, updateHealthRecord } from "../services/api";
 import { motion } from "framer-motion";
-
+import { UserContext } from '../context/UserContext';
 const modalVariants = {
     hidden: { opacity: 0, scale: 0.9 },
     visible: { opacity: 1, scale: 1 },
@@ -13,14 +13,24 @@ const inputVariants = {
     visible: { opacity: 1, y: 0 },
 };
 
-function AddHealthRecord({ isOpen, onClose, selectedRecord, refreshRecords }) {
+function AddHealthRecord({ isOpen, onClose, selectedRecord, refreshRecords, userId }) {
+    const { user } = useContext(UserContext); // Correct usage
+
+    useEffect(() => {
+        console.log("Received userId in AddHealthRecord:", user);
+    }, [user]);
+
+   useEffect(() => {
+       console.log("Received userId in AddHealthRecord:", userId);
+}, [userId]);
     const [form, setForm] = useState({
         date: "",
         bodyTemperature: "",
         systolic: "",
         diastolic: "",
         heartRate: "",
-        bmi: ""
+        bmi: "",
+        userId: userId || ""
     });
 
     useEffect(() => {
@@ -32,18 +42,15 @@ function AddHealthRecord({ isOpen, onClose, selectedRecord, refreshRecords }) {
                 diastolic: selectedRecord.bloodPressure.diastolic,
                 heartRate: selectedRecord.heartRate,
                 bmi: selectedRecord.bmi,
+                userId: userId // Ensure userId is set
             });
         } else {
-            setForm({
-                date: "",
-                bodyTemperature: "",
-                systolic: "",
-                diastolic: "",
-                heartRate: "",
-                bmi:"",
-            });
+            setForm((prevForm) => ({
+                ...prevForm,
+                userId: userId // Ensure userId is included on form reset
+            }));
         }
-    }, [selectedRecord]);
+    }, [selectedRecord, userId]);
 
     const handleChange = (e) => {
         setForm({
@@ -65,8 +72,9 @@ function AddHealthRecord({ isOpen, onClose, selectedRecord, refreshRecords }) {
             },
             heartRate: parseInt(heartRate),
             bmi: parseFloat(bmi),
+            userId
         };
-
+        console.log(record);
         if (selectedRecord) {
             await updateHealthRecord(selectedRecord._id, record);
         } else {
