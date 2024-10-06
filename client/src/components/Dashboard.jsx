@@ -19,7 +19,7 @@ function Dashboard({ userId }) {
     // Fetch records on component mount
     useEffect(() => {
         const fetchRecords = async () => {
-            const data = await fetchHealthRecords();
+            const data = await fetchHealthRecords(userId);
             setRecords(data);
             setFilteredRecords(data);
         };
@@ -149,7 +149,8 @@ function Dashboard({ userId }) {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 refreshRecords={() => {
-                    fetchHealthRecords().then((data) => {
+                    console.log(userId);
+                    fetchHealthRecords(userId).then((data) => {
                         setRecords(data);
                         setFilteredRecords(data);
                     });

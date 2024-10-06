@@ -109,7 +109,9 @@ const router = express.Router();
  *         description: Health record not found
  */
 
-router.route("/").get(getHealthRecords).post(createHealthRecord);
+router.route("/:userId").get(getHealthRecords);
+
+router.route("/").post(createHealthRecord);
 
 router
     .route("/:id")

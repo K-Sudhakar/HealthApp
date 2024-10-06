@@ -1,9 +1,10 @@
 const API_URL = "http://localhost:5000/api/health-records";
 
 // Fetch all records
-export const fetchHealthRecords = async () => {
+export const fetchHealthRecords = async (userId) => {
+    console.log(userId);
   try {
-    const response = await fetch(API_URL);
+      const response = await fetch(`${API_URL}/${userId}`);
     if (!response.ok) throw new Error("Failed to fetch records");
     return response.json();
   } catch (error) {
