@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { fetchHealthRecords, deleteHealthRecord } from "../services/api";
 import AddHealthRecord from "./AddHealthRecord";
 import SearchBar from "./SearchBar";
 import RecordModal from "./RecordModal";
 import "../index.css";
+import { UserContext } from '../context/UserContext';
 
-function Dashboard() {
+function Dashboard({ userId }) {
     const [records, setRecords] = useState([]);
     const [filteredRecords, setFilteredRecords] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,6 +14,7 @@ function Dashboard() {
     const [sortOrder, setSortOrder] = useState("asc");
     const [highlightedRecord, setHighlightedRecord] = useState(null);
     const [isGlowing, setIsGlowing] = useState(false);
+
 
     // Fetch records on component mount
     useEffect(() => {
@@ -121,7 +123,7 @@ function Dashboard() {
 
     return (
         <div className="container mx-auto p-6 bg-gray-900 text-gray-100 min-h-screen">
-            <h1 className="text-4xl font-bold mb-6">Health Metrics Dashboard</h1>
+            <h1 className="text-4xl font-bold mb-6">FitMi Health Metrics Dashboard</h1>
             <button
                 className="bg-teal-500 text-white px-5 py-3 mb-6 rounded shadow-lg hover:bg-teal-400 transition duration-300"
                 onClick={() => setIsModalOpen(true)}
@@ -130,7 +132,7 @@ function Dashboard() {
             </button>
             <SearchBar onSearch={handleSearch} />
             <div className="mb-6 flex gap-4">
-                {["date", "heartRate", "bodyTemperature", "bloodPressure","bmi"].map(
+                {["date", "heartRate", "bodyTemperature", "bloodPressure", "bmi"].map(
                     (field) => (
                         <button
                             key={field}
@@ -143,7 +145,7 @@ function Dashboard() {
                     )
                 )}
             </div>
-            <AddHealthRecord
+            <AddHealthRecord userId={userId}
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 refreshRecords={() => {
@@ -158,16 +160,10 @@ function Dashboard() {
                     <thead>
                         <tr className="bg-gray-800">
                             <th className="px-6 py-4">Date</th>
-                            <th className="px-6 py-4">
-                                Body Temperature (Reference: 97.7-99.5°F)
-                            </th>
-                            <th className="px-6 py-4">
-                                Blood Pressure (Reference: 120/80 mmHg)
-                            </th>
+                            <th className="px-6 py-4">Body Temperature (Reference: 97.7-99.5°F)</th>
+                            <th className="px-6 py-4">Blood Pressure (Reference: 120/80 mmHg)</th>
                             <th className="px-6 py-4">Heart Rate (Reference: 60-100 bpm)</th>
-                            <th className="px-6 py-4">
-                                Body Mass Index (Reference: kg/m2)
-                            </th>
+                            <th className="px-6 py-4">Body Mass Index (Reference: kg/m²)</th>
                             <th className="px-6 py-4">Actions</th>
                         </tr>
                     </thead>
@@ -175,9 +171,7 @@ function Dashboard() {
                         {filteredRecords.map((record) => (
                             <tr
                                 key={record._id}
-                                className={`${highlightedRecord === record._id || isGlowing
-                                    ? "glow-active"
-                                    : ""
+                                className={`${highlightedRecord === record._id || isGlowing ? "glow-active" : ""
                                     } transition-colors duration-300`}
                             >
                                 <td className="border px-6 py-4">
@@ -221,29 +215,29 @@ function Dashboard() {
                                         ? "bg-red-600 text-white"
                                         : record.bmi >= 18.5 && record.bmi <= 24.9
                                             ? "bg-green-500 text-white"
-                                            : " bg-orange-400"
+                                            : "bg-orange-400"
                                         }`}
                                 >
                                     {record.bmi}
                                 </td>
                                 <td className="border px-6 py-4">
-                                    <button
+                                    <table><tr> <td><input type="button" value="View"
                                         className="bg-indigo-500 text-white px-3 py-1 rounded hover:bg-indigo-400 transition duration-300"
                                         onClick={() => handleView(record)}
-                                    >
-                                        View
-                                    </button>
-                                    <button
+                                    /></td><td><input type="button" value="Delete"
                                         className="bg-red-600 text-white px-3 py-1 rounded ml-2 hover:bg-red-500 transition duration-300"
                                         onClick={() => handleDelete(record._id)}
-                                    >
-                                        Delete
-                                    </button>
+                                    /></td></tr></table>
+
+
+
+
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
+
             ) : (
                 <p>No records found.</p>
             )}

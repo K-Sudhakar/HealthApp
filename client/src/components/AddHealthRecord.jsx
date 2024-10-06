@@ -1,7 +1,7 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { createHealthRecord, updateHealthRecord } from "../services/api";
 import { motion } from "framer-motion";
-import { UserContext } from '../context/UserContext';
+
 const modalVariants = {
     hidden: { opacity: 0, scale: 0.9 },
     visible: { opacity: 1, scale: 1 },
@@ -14,15 +14,7 @@ const inputVariants = {
 };
 
 function AddHealthRecord({ isOpen, onClose, selectedRecord, refreshRecords, userId }) {
-    const { user } = useContext(UserContext); // Correct usage
 
-    useEffect(() => {
-        console.log("Received userId in AddHealthRecord:", user);
-    }, [user]);
-
-   useEffect(() => {
-       console.log("Received userId in AddHealthRecord:", userId);
-}, [userId]);
     const [form, setForm] = useState({
         date: "",
         bodyTemperature: "",
@@ -61,7 +53,7 @@ function AddHealthRecord({ isOpen, onClose, selectedRecord, refreshRecords, user
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const { date, bodyTemperature, systolic, diastolic, heartRate,bmi } = form;
+        const { date, bodyTemperature, systolic, diastolic, heartRate, bmi } = form;
 
         const record = {
             date,
@@ -88,7 +80,7 @@ function AddHealthRecord({ isOpen, onClose, selectedRecord, refreshRecords, user
             systolic: "",
             diastolic: "",
             heartRate: "",
-            bmi:"",
+            bmi: "",
         });
         onClose();
     };
