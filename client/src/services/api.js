@@ -1,4 +1,5 @@
 const API_URL = "http://localhost:5000/api/health-records";
+const AUTH_API_URL = "http://localhost:5000/api/register"; 
 
 // Fetch all records
 export const fetchHealthRecords = async (userId) => {
@@ -71,4 +72,25 @@ export const deleteHealthRecord = async (id) => {
   } catch (error) {
     console.error("Error deleting health record:", error);
   }
+};
+
+// Register a new user
+export const registerUser = async (userData) => {
+    try {
+        const response = await fetch(AUTH_API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userData),
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to register user");
+        }
+        return response.json();
+    } catch (error) {
+        console.error("Error registering user:", error);
+        return null;
+    }
 };

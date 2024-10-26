@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
@@ -6,10 +6,12 @@ import AddHealthRecord from "./components/AddHealthRecord";
 import RecordModal from "./components/RecordModal";
 import { KJUR } from 'jsrsasign';
 import { UserContext, UserProvider } from './context/UserContext';
+import UserRegistration from './components/UserRegistration';
 import logo from './assets/fitmi.png';
 
 const App = () => {
     const { user, setUser } = useContext(UserContext);
+    const [isRegistrationOpen, setRegistrationOpen] = useState(false); // State for the registration modal
 
     const handleLoginSuccess = async (credentialResponse) => {
         try {
@@ -29,16 +31,24 @@ const App = () => {
         console.log('User logged out');
     };
 
+    const openRegistrationModal = () => {
+        setRegistrationOpen(true);
+    };
+
+    const closeRegistrationModal = () => {
+        setRegistrationOpen(false);
+    };
+
     return (
         <UserProvider>
-            <GoogleOAuthProvider clientId="67842117185-4o04uemq2l697f6qm5dr534tj0vv7rh8.apps.googleusercontent.com">
+            <GoogleOAuthProvider clientId="YOUR_CLIENT_ID">
                 <div className="min-h-screen bg-gray-100 flex items-center justify-center">
                     <div className="container mx-auto p-4">
                         {user ? (
                             <div className="bg-white rounded-lg shadow-lg p-6">
                                 <table className="w-full">
                                     <tr>
-                                        <td >
+                                        <td>
                                             <div className="text-center">
                                                 <img src={logo} alt="FitMi Logo" className="mx-auto h-16" />
                                                 <h1 className="text-3xl font-bold text-gray-800 mt-2">Welcome, {user.name}</h1>
@@ -62,9 +72,6 @@ const App = () => {
                                         </td>
                                     </tr>
                                 </table>
-                               
-                              
-
                                 <Router>
                                     <Routes>
                                         <Route path="/" element={<Dashboard userId={user.sub} />} />
@@ -83,12 +90,16 @@ const App = () => {
                                     onError={handleLoginFailure}
                                     className="w-full"
                                 />
+                                <p className="mt-4">
+                                    Don't have an account?
+                                    <button onClick={openRegistrationModal} className="text-blue-600 hover:underline"> Register here</button>
+                                </p>
                             </div>
-
                         )}
                     </div>
                 </div>
             </GoogleOAuthProvider>
+            <UserRegistration isOpen={isRegistrationOpen} onClose={closeRegistrationModal} /> {/* Include the User Registration modal */}
         </UserProvider>
     );
 };
