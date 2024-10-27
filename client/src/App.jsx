@@ -7,11 +7,13 @@ import RecordModal from "./components/RecordModal";
 import { KJUR } from 'jsrsasign';
 import { UserContext, UserProvider } from './context/UserContext';
 import UserRegistration from './components/UserRegistration';
+import LoginPage from './components/LoginPage'; // Import your LoginPopup component
 import logo from './assets/fitmi.png';
 
 const App = () => {
     const { user, setUser } = useContext(UserContext);
     const [isRegistrationOpen, setRegistrationOpen] = useState(false); // State for the registration modal
+    const [isLoginOpen, setLoginOpen] = useState(false); // State for the login modal
 
     const handleLoginSuccess = async (credentialResponse) => {
         try {
@@ -39,9 +41,17 @@ const App = () => {
         setRegistrationOpen(false);
     };
 
+    const openLoginModal = () => {
+        setLoginOpen(true);
+    };
+
+    const closeLoginModal = () => {
+        setLoginOpen(false);
+    };
+
     return (
         <UserProvider>
-            <GoogleOAuthProvider clientId="YOUR_CLIENT_ID">
+            <GoogleOAuthProvider clientId="67842117185-0htpjcsjf1c5kpo9j208cig01nmlk1l8.apps.googleusercontent.com">
                 <div className="min-h-screen bg-gray-100 flex items-center justify-center">
                     <div className="container mx-auto p-4">
                         {user ? (
@@ -84,7 +94,8 @@ const App = () => {
                             <div className="flex flex-col items-center bg-white p-8 rounded-lg shadow-lg">
                                 <h2 className="text-3xl font-bold mb-6 text-gray-800">Please Log In</h2>
                                 <img src={logo} alt="FitMi Logo" className="mx-auto h-20 mb-6" />
-                                <p className="text-gray-600 text-center mb-6">Access your health metrics and stay fit!</p>
+                                    <p className="text-gray-600 text-center mb-6">Access your health metrics and stay fit!</p>
+                                   
                                 <GoogleLogin
                                     onSuccess={handleLoginSuccess}
                                     onError={handleLoginFailure}
@@ -92,7 +103,8 @@ const App = () => {
                                 />
                                 <p className="mt-4">
                                     Don't have an account?
-                                    <button onClick={openRegistrationModal} className="text-blue-600 hover:underline"> Register here</button>
+                                        <button onClick={openRegistrationModal} className="text-blue-600 hover:underline"> Register here</button>
+                                        <button onClick={openLoginModal} className="text-blue-600 hover:underline ml-4">Login</button> {/* Login button */}
                                 </p>
                             </div>
                         )}
@@ -100,6 +112,7 @@ const App = () => {
                 </div>
             </GoogleOAuthProvider>
             <UserRegistration isOpen={isRegistrationOpen} onClose={closeRegistrationModal} /> {/* Include the User Registration modal */}
+            <LoginPage onRegisterClick={openRegistrationModal} isOpen={isLoginOpen} onClose={() => closeLoginModal(false)} />
         </UserProvider>
     );
 };

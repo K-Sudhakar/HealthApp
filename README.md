@@ -47,6 +47,7 @@ A full-stack Health Tracking App built with the MERN (MongoDB, Express, React, N
 - **MongoDB**: As the database to store user health records.
 - **Mongoose**: For MongoDB object modeling.
 - **CORS**: Middleware to handle cross-origin requests.
+- **Google API**: For user authentication via Gmail.
 
 ### API Endpoints:
 - **POST /health-records**: Create a new health record.
