@@ -187,7 +187,7 @@ const router = express.Router();
 
 // Define routes with userId as a parameter
 router.route("/:userId").get(getHealthRecords);
-router.route("/").post(createHealthRecord);
+router.route("/:userId").post(createHealthRecord);
 
 // Define routes with both userId and health record id
 router
