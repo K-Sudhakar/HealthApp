@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { motion } from "framer-motion";
-//import { loginUser } from "../services/api"; // Import your API method for login
+import { loginUser } from "../services/api"; // Import your API method for login
+import { UserContext, UserProvider } from '../context/UserContext';
 
 const modalVariants = {
     hidden: { opacity: 0, scale: 0.9 },
@@ -13,13 +14,14 @@ const inputVariants = {
     visible: { opacity: 1, y: 0 },
 };
 
-function LoginPage({ isOpen, onClose }) {
+function LoginPage({ isOpen, onClose, setUser }) {
     const [form, setForm] = useState({
         username: "",
         password: "",
     });
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+
 
     const handleChange = (e) => {
         setForm({
@@ -33,13 +35,20 @@ function LoginPage({ isOpen, onClose }) {
         setError(""); // Clear previous errors
         setSuccess(""); // Clear previous success messages
 
-        //try {
-        //    const response = await loginUser(form); // Call the API method to log in the user
-        //    setSuccess(response.message); // Handle success message
-        //    setForm({ username: "", password: "" }); // Reset form
-        //} catch (err) {
-        //    setError(err.message || "Login failed."); // Handle error message
-        //}
+        try {
+            const response = await loginUser(form); // Call the API method to log in the user
+            if (response && response.token) {
+                setSuccess("Login successful!");
+                localStorage.setItem("token", response.token); // Store the token in localStorage
+                setForm({ username: "", password: "" }); // Reset form
+                setUser({ name: response.user.name, sub: response.user.id, picture: '' });
+                onClose(); // Close the modal
+            } else {
+                throw new Error(response?.message || "Invalid login response");
+            }
+        } catch (err) {
+            setError(err.message || "Login failed."); // Handle error message
+        }
     };
 
     if (!isOpen) return null;

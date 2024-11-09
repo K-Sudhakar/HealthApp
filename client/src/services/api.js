@@ -1,6 +1,6 @@
 const API_URL = "http://localhost:5000/api/health-records";
 const AUTH_API_URL = "http://localhost:5000/api/register"; 
-
+const LOGIN_API_URL = "http://localhost:5000/api/login";
 // Fetch all records
 export const fetchHealthRecords = async (userId) => {
     console.log(userId);
@@ -46,8 +46,8 @@ export const fetchHealthRecordById = async (id) => {
 
 // Update a record
 export const updateHealthRecord = async (id, updatedRecord) => {
-  try {
-    const response = await fetch(`${API_URL}/${id}`, {
+    try {
+        const response = await fetch(`${API_URL}/${updatedRecord.userId}/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -91,6 +91,26 @@ export const registerUser = async (userData) => {
         return response.json();
     } catch (error) {
         console.error("Error registering user:", error);
+        return null;
+    }
+};
+// Log in a user
+export const loginUser = async (credentials) => {
+    try {
+        const response = await fetch(LOGIN_API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(credentials),
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to log in");
+        }
+        return response.json(); // Typically contains the token and user data
+    } catch (error) {
+        console.error("Error logging in:", error);
         return null;
     }
 };

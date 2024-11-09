@@ -18,6 +18,7 @@ const App = () => {
     const handleLoginSuccess = async (credentialResponse) => {
         try {
             const decoded = KJUR.jws.JWS.parse(credentialResponse.credential);
+            console.log(decoded.payloadObj);
             setUser({ ...decoded.payloadObj });
         } catch (error) {
             console.error('Error decoding JWT:', error);
@@ -112,7 +113,7 @@ const App = () => {
                 </div>
             </GoogleOAuthProvider>
             <UserRegistration isOpen={isRegistrationOpen} onClose={closeRegistrationModal} /> {/* Include the User Registration modal */}
-            <LoginPage onRegisterClick={openRegistrationModal} isOpen={isLoginOpen} onClose={() => closeLoginModal(false)} />
+            <LoginPage onRegisterClick={openRegistrationModal} isOpen={isLoginOpen} onClose={() => closeLoginModal(false)} setUser={setUser} />
         </UserProvider>
     );
 };
