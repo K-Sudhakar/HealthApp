@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { registerUser } from "../services/api"; // Ensure this is your actual API method
+import { updateUser } from "../services/api"; // Ensure this is your actual API method to update the user
 
 const modalVariants = {
     hidden: { opacity: 0, scale: 0.9 },
@@ -13,17 +13,30 @@ const inputVariants = {
     visible: { opacity: 1, y: 0 },
 };
 
-function UserRegistration({ isOpen, onClose }) {
+function UpdateUserProfile({ isOpen, onClose, userData, setUser }) {
     const [form, setForm] = useState({
         name: "",
         email: "",
-        password: "",
-        gender: "male", // Default gender
+        gender: "male",
         height: "",
         weight: "",
     });
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+
+    // Populate the form with the existing user data when the modal opens
+    useEffect(() => {
+        console.log("Update User:",userData);
+        if (userData) {
+            setForm({
+                name: userData.name || "",
+                email: userData.email || "",
+                gender: userData.gender || "male",
+                height: userData.height || "",
+                weight: userData.weight || "",
+            });
+        }
+    }, [userData]);
 
     const handleChange = (e) => {
         setForm({
@@ -38,18 +51,11 @@ function UserRegistration({ isOpen, onClose }) {
         setSuccess(""); // Clear previous success messages
 
         try {
-            const response = await registerUser(form); // Call the API method to register the user
+            const response = await updateUser(userData.sub, form); // Call the API method to update the user
             setSuccess(response.message); // Handle success message
-            setForm({
-                name: "",
-                email: "",
-                password: "",
-                gender: "male",
-                height: "",
-                weight: "",
-            }); // Reset form
+            setUser({ name: response.user.name, sub: response.user.id, picture: '', gender: response.user.gender, height: response.user.height, weight: response.user.weight, email: response.user.email });
         } catch (err) {
-            setError(err.message || "Registration failed."); // Handle error message
+            setError(err.message || "Update failed."); // Handle error message
         }
     };
 
@@ -71,7 +77,7 @@ function UserRegistration({ isOpen, onClose }) {
                 animate="visible"
                 transition={{ delay: 0.2, duration: 0.4 }}
             >
-                <h2 className="text-2xl font-bold text-gray-100 mb-4">User Registration</h2>
+                <h2 className="text-2xl font-bold text-gray-100 mb-4">Update User</h2>
                 {error && <p className="text-red-500 mb-4">{error}</p>}
                 {success && <p className="text-green-500 mb-4">{success}</p>}
                 <form onSubmit={handleSubmit}>
@@ -92,17 +98,6 @@ function UserRegistration({ isOpen, onClose }) {
                             type="email"
                             name="email"
                             value={form.email}
-                            onChange={handleChange}
-                            required
-                            className="w-full bg-gray-700 text-gray-100 border border-gray-600 p-3 rounded-md mt-1"
-                        />
-                    </label>
-                    <label className="block mb-4">
-                        <span className="text-gray-300">Password:</span>
-                        <input
-                            type="password"
-                            name="password"
-                            value={form.password}
                             onChange={handleChange}
                             required
                             className="w-full bg-gray-700 text-gray-100 border border-gray-600 p-3 rounded-md mt-1"
@@ -150,7 +145,7 @@ function UserRegistration({ isOpen, onClose }) {
                             type="submit"
                             className="bg-green-500 text-white px-4 py-2 rounded-md transition duration-300 hover:bg-green-600"
                         >
-                            Register
+                            Update
                         </button>
                         <button
                             type="button"
@@ -166,4 +161,4 @@ function UserRegistration({ isOpen, onClose }) {
     );
 }
 
-export default UserRegistration;
+export default UpdateUserProfile;

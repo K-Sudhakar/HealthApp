@@ -1,77 +1,78 @@
 const API_URL = "http://localhost:5000/api/health-records";
-const AUTH_API_URL = "http://localhost:5000/api/register"; 
+const AUTH_API_URL = "http://localhost:5000/api/register";
 const LOGIN_API_URL = "http://localhost:5000/api/login";
-// Fetch all records
+const UPDATE_USER_API_URL = "http://localhost:5000/api/users";
+
+// Fetch all health records by user ID
 export const fetchHealthRecords = async (userId) => {
-    console.log(userId);
-  try {
-      const response = await fetch(`${API_URL}/${userId}`);
-    if (!response.ok) throw new Error("Failed to fetch records");
-    return response.json();
-  } catch (error) {
-    console.error("Error fetching health records:", error);
-    return null;
-  }
+    try {
+        const response = await fetch(`${API_URL}/${userId}`);
+        if (!response.ok) throw new Error("Failed to fetch health records");
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching health records:", error);
+        return null;
+    }
 };
 
-// Create a new record
+// Create a new health record
 export const createHealthRecord = async (record) => {
-  try {
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(record),
-    });
-    if (!response.ok) throw new Error("Failed to create record");
-    return response.json();
-  } catch (error) {
-    console.error("Error creating health record:", error);
-    return null;
-  }
+    try {
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(record),
+        });
+        if (!response.ok) throw new Error("Failed to create health record");
+        return await response.json();
+    } catch (error) {
+        console.error("Error creating health record:", error);
+        return null;
+    }
 };
 
-// Fetch a specific record
+// Fetch a specific health record by its ID
 export const fetchHealthRecordById = async (id) => {
-  try {
-    const response = await fetch(`${API_URL}/${id}`);
-    if (!response.ok) throw new Error("Failed to fetch record");
-    return response.json();
-  } catch (error) {
-    console.error("Error fetching health record by ID:", error);
-    return null;
-  }
+    try {
+        const response = await fetch(`${API_URL}/${id}`);
+        if (!response.ok) throw new Error("Failed to fetch health record");
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching health record by ID:", error);
+        return null;
+    }
 };
 
-// Update a record
+// Update a health record
 export const updateHealthRecord = async (id, updatedRecord) => {
     try {
         const response = await fetch(`${API_URL}/${updatedRecord.userId}/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updatedRecord),
-    });
-    if (!response.ok) throw new Error("Failed to update record");
-    return response.json();
-  } catch (error) {
-    console.error("Error updating health record:", error);
-    return null;
-  }
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedRecord),
+        });
+        if (!response.ok) throw new Error("Failed to update health record");
+        return await response.json();
+    } catch (error) {
+        console.error("Error updating health record:", error);
+        return null;
+    }
 };
 
-// Delete a record
+// Delete a health record
 export const deleteHealthRecord = async (id) => {
-  try {
-    const response = await fetch(`${API_URL}/${id}`, {
-      method: "DELETE",
-    });
-    if (!response.ok) throw new Error("Failed to delete record");
-  } catch (error) {
-    console.error("Error deleting health record:", error);
-  }
+    try {
+        const response = await fetch(`${API_URL}/${id}`, {
+            method: "DELETE",
+        });
+        if (!response.ok) throw new Error("Failed to delete health record");
+    } catch (error) {
+        console.error("Error deleting health record:", error);
+    }
 };
 
 // Register a new user
@@ -88,12 +89,13 @@ export const registerUser = async (userData) => {
             const errorData = await response.json();
             throw new Error(errorData.message || "Failed to register user");
         }
-        return response.json();
+        return await response.json();
     } catch (error) {
         console.error("Error registering user:", error);
         return null;
     }
 };
+
 // Log in a user
 export const loginUser = async (credentials) => {
     try {
@@ -108,9 +110,30 @@ export const loginUser = async (credentials) => {
             const errorData = await response.json();
             throw new Error(errorData.message || "Failed to log in");
         }
-        return response.json(); // Typically contains the token and user data
+        return await response.json(); // Returns token and user data
     } catch (error) {
         console.error("Error logging in:", error);
+        return null;
+    }
+};
+
+// Update user details
+export const updateUser = async (userId, updatedUser) => {
+    try {
+        const response = await fetch(`${UPDATE_USER_API_URL}/${userId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedUser),
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to update user");
+        }
+        return await response.json();
+    } catch (error) {
+        console.error("Error updating user:", error);
         return null;
     }
 };

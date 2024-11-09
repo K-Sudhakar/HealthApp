@@ -41,7 +41,7 @@ function LoginPage({ isOpen, onClose, setUser }) {
                 setSuccess("Login successful!");
                 localStorage.setItem("token", response.token); // Store the token in localStorage
                 setForm({ username: "", password: "" }); // Reset form
-                setUser({ name: response.user.name, sub: response.user.id, picture: '' });
+                setUser({ name: response.user.name, sub: response.user.id, picture: '', gender: response.user.gender, height: response.user.height, weight: response.user.weight, email: response.user.email });
                 onClose(); // Close the modal
             } else {
                 throw new Error(response?.message || "Invalid login response");
